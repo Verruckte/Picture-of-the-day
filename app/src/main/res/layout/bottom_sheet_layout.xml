@@ -12,23 +12,19 @@
 
     <View
         android:id="@+id/bottom_sheet_line"
-        android:layout_width="@dimen/bottom_sheet_line_width"
-        android:layout_height="@dimen/bottom_sheet_line_height"
+        android:layout_width="25dp"
+        android:layout_height="1dp"
         android:layout_marginTop="@dimen/bottom_sheet_line_margin_top"
-        android:background="#663b4351"
+        android:background="@color/light_grey"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/bottom_sheet_description_header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/bottom_sheet_text_view_style"
         android:layout_marginTop="@dimen/bottom_sheet_header_margin_top"
-        android:paddingStart="@dimen/bottom_sheet_header_padding_start"
-        android:paddingEnd="@dimen/bottom_sheet_header_padding_end"
         android:text="@string/bottom_sheet_header_example"
-        android:textColor="#000"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,10 +32,7 @@
 
     <TextView
         android:id="@+id/bottom_sheet_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/bottom_sheet_description_padding_start"
-        android:paddingEnd="@dimen/bottom_sheet_description_padding_end"
+        style="@style/bottom_sheet_text_view_style"
         android:text="@string/bottom_sheet_description_example"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

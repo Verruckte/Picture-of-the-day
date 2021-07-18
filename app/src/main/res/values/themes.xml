@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.PictureOfTheDay" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="DefaultTheme" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -12,5 +12,38 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Title</item>
+    </style>
+
+    <style name="MyCustomThemeBlue" parent="DefaultTheme">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/steel_blue</item>
+        <item name="colorPrimaryVariant">@color/sky_blue</item>
+        <item name="colorOnPrimary">@color/purple_500</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/cornflower_blue</item>
+        <item name="colorSecondaryVariant">@color/cadet_blue</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+        <item name="colorSurface">@color/lavender</item>
+        <item name="colorOnSurface">@color/steel_blue</item>
+    </style>
+
+    <style name="MyCustomThemeRed" parent="DefaultTheme">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/pale_violet_red</item>
+        <item name="colorPrimaryVariant">@color/thistle</item>
+        <item name="colorOnPrimary">@color/maroon</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/sandy_brown</item>
+        <item name="colorSecondaryVariant">@color/light_coral</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+        <item name="colorSurface">@color/pink</item>
+        <item name="colorOnSurface">@color/white</item>
     </style>
 </resources>
