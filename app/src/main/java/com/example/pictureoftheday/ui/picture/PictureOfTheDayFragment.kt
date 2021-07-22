@@ -14,6 +14,8 @@ import coil.api.load
 import com.example.pictureoftheday.R
 import com.example.pictureoftheday.databinding.MainFragmentBinding
 import com.example.pictureoftheday.ui.MainActivity
+import com.example.pictureoftheday.ui.picture.view_pager.ViewPagerAdapter
+import com.example.pictureoftheday.ui.settings.SettingsFragment
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
@@ -32,9 +34,9 @@ class PictureOfTheDayFragment : Fragment() {
     private lateinit var bottomSheetContent: TextView
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         _binding = MainFragmentBinding.inflate(inflater, container, false)
         return binding.root
@@ -45,10 +47,12 @@ class PictureOfTheDayFragment : Fragment() {
         binding.inputLayout.setEndIconOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse(
-                    "https://en.wikipedia.org/wiki/${binding.inputEditText.text.toString()}"
+                        "https://en.wikipedia.org/wiki/${binding.inputEditText.text.toString()}"
                 )
             })
         }
+        binding.viewPager.adapter = ViewPagerAdapter(childFragmentManager)
+        binding.tabLayout.setupWithViewPager(binding.viewPager)
         setBottomSheetBehaviour(view.findViewById(R.id.bottom_sheet_container))
         bottomSheetHeader = view.findViewById(R.id.bottom_sheet_description_header)
         bottomSheetContent = view.findViewById(R.id.bottom_sheet_description)
@@ -57,9 +61,9 @@ class PictureOfTheDayFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel.getData().observe(viewLifecycleOwner) {
+        viewModel.getData(null).observe(viewLifecycleOwner, {
             renderData(it)
-        }
+        })
     }
 
     private fun renderData(data: PictureOfTheDayData) {
@@ -74,11 +78,6 @@ class PictureOfTheDayFragment : Fragment() {
                 if (url.isNullOrEmpty()) {
                     toast("Url is empty")
                 } else {
-                    binding.imageView.load(url) {
-                        lifecycle(this@PictureOfTheDayFragment)
-                        error(R.drawable.ic_load_error_vector)
-                        placeholder(R.drawable.ic_no_photo_vector)
-                    }
                     bottomSheetHeader.text = serverResponseData.title
                     bottomSheetContent.text = serverResponseData.explanation
                 }
@@ -106,7 +105,7 @@ class PictureOfTheDayFragment : Fragment() {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
         bottomSheetBehavior.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
+                BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_DRAGGING -> toast("STATE_DRAGGING")
@@ -131,12 +130,19 @@ class PictureOfTheDayFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.app_bar_fav -> toast(getString(R.string.favourite))
-            R.id.app_bar_settings -> toast(getString(R.string.settings))
+            R.id.app_bar_settings -> activity?.apply {
+                this.supportFragmentManager
+                        .beginTransaction()
+                        .add(R.id.container, SettingsFragment())
+                        .addToBackStack(null)
+                        .commitAllowingStateLoss()
+            }
             android.R.id.home -> {
                 activity?.let {
                     BottomNavigationDrawerFragment().show(it.supportFragmentManager, "tag")
                 }
             }
+            R.id.app_bar_search -> toast(getString(R.string.search))
         }
         return super.onOptionsItemSelected(item)
     }
@@ -158,8 +164,8 @@ class PictureOfTheDayFragment : Fragment() {
                 isMain = true
                 with(binding) {
                     bottomAppBar.navigationIcon = ContextCompat.getDrawable(
-                        context,
-                        R.drawable.ic_hamburger_menu_bottom_bar
+                            context,
+                            R.drawable.ic_hamburger_menu_bottom_bar
                     )
                     bottomAppBar.fabAlignmentMode = BottomAppBar.FAB_ALIGNMENT_MODE_CENTER
                     fab.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_plus_fab))
