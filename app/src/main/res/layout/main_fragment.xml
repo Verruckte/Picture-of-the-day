@@ -46,8 +46,8 @@
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.example.pictureoftheday.ui.view.EqiulateralImageView
-                android:id="@+id/image_view"
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/view_pager"
                 style="@style/equilateral_image_view_style"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/image_view_layout_height"
@@ -56,7 +56,15 @@
                 app:layout_constraintEnd_toEndOf="@id/main"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/input_layout"
-                app:srcCompat="@drawable/ic_no_photo_vector" />
+                app:srcCompat="@drawable/ic_no_photo_vector">
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tab_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/input_layout"
+                    app:tabRippleColor="@color/yellow" />
+            </androidx.viewpager.widget.ViewPager>
 
             <FrameLayout
                 android:id="@+id/loadingLayout"
@@ -65,7 +73,7 @@
                 android:background="@color/white"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="@id/image_view"
+                app:layout_constraintTop_toTopOf="@id/view_pager"
                 tools:visibility="gone">
 
                 <ProgressBar
