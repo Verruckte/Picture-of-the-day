@@ -24,9 +24,9 @@ class SettingsFragment : Fragment() {
     private var currentTheme: Int? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         _binding = SettingsFragmentBinding.inflate(inflater, container, false)
         return binding.root
@@ -71,8 +71,8 @@ class SettingsFragment : Fragment() {
     private fun setSharedPreferencesSettings() {
         activity?.let {
             currentTheme =
-                it.getSharedPreferences(SETTINGS_SHARED_PREFERENCES, MODE_PRIVATE)
-                    .getInt(THEME_NAME_SHARED_PREFERENCES, MY_DEFAULT_THEME)
+                    it.getSharedPreferences(SETTINGS_SHARED_PREFERENCES, MODE_PRIVATE)
+                            .getInt(THEME_NAME_SHARED_PREFERENCES, MY_DEFAULT_THEME)
             when (currentTheme) {
                 MY_CUSTOM_THEME_BLUE -> {
                     binding.blueTheme.isChecked = true

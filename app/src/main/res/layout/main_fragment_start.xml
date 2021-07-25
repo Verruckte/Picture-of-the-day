@@ -18,7 +18,7 @@
             android:layout_marginBottom="@dimen/main_layout_margin_bottom"
             android:paddingStart="@dimen/main_layout_padding_start"
             android:paddingEnd="@dimen/main_layout_padding_end"
-            tools:ignore="MotionLayoutInvalidSceneFileReference">
+            app:layoutDescription="@xml/motion_scene">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/input_layout"
@@ -53,10 +53,19 @@
                 style="@style/equilateral_image_view_style"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/image_view_layout_height"
+                android:background="?attr/colorSecondary"
                 android:contentDescription="@string/greeting_message"
-                android:visibility="gone"
-                app:layout_constraintStart_toEndOf="@id/nested_scroll_view"
-                app:layout_constraintTop_toBottomOf="@id/nested_scroll_view" />
+                android:paddingTop="@dimen/greeting_message_padding_top"
+                android:text="@string/greeting_message"
+                android:textAlignment="center"
+                android:textColor="?attr/colorOnSecondary"
+                android:textSize="@dimen/greeting_message_text_size"
+                android:textStyle="bold"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/main"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/input_layout" />
 
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/view_pager"
@@ -64,10 +73,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/image_view_layout_height"
                 android:contentDescription="@string/photo_of_the_day_stub"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/main"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/input_layout"
+                app:layout_constraintEnd_toStartOf="@id/main"
+                app:layout_constraintTop_toBottomOf="@id/main"
                 app:srcCompat="@drawable/ic_no_photo_vector">
 
                 <com.google.android.material.tabs.TabLayout

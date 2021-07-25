@@ -13,16 +13,21 @@ import androidx.lifecycle.ViewModelProvider
 import coil.api.load
 import com.example.pictureoftheday.R
 import com.example.pictureoftheday.databinding.MainFragmentBinding
+import com.example.pictureoftheday.databinding.MainFragmentStartBinding
 import com.example.pictureoftheday.ui.MainActivity
+import com.example.pictureoftheday.ui.collapsing_toolbar.CollapsingToolbarActivity
 import com.example.pictureoftheday.ui.picture.view_pager.ViewPagerAdapter
 import com.example.pictureoftheday.ui.settings.SettingsFragment
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 
+const val BOTTOM_SHEET_HEADER = "BottomSheetHeader"
+const val BOTTOM_SHEET_CONTENT = "BottomSheetContent"
+
 class PictureOfTheDayFragment : Fragment() {
 
-    private var _binding: MainFragmentBinding? = null
+    private var _binding: MainFragmentStartBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: PictureOfTheDayViewModel by lazy {
@@ -38,7 +43,7 @@ class PictureOfTheDayFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        _binding = MainFragmentBinding.inflate(inflater, container, false)
+        _binding = MainFragmentStartBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -128,8 +133,11 @@ class PictureOfTheDayFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val intent = Intent(context, CollapsingToolbarActivity::class.java)
+        intent.putExtra(BOTTOM_SHEET_HEADER, bottomSheetHeader.text)
+        intent.putExtra(BOTTOM_SHEET_CONTENT, bottomSheetContent.text)
         when (item.itemId) {
-            R.id.app_bar_fav -> toast(getString(R.string.favourite))
+            R.id.app_bar_fav -> startActivity(intent)
             R.id.app_bar_settings -> activity?.apply {
                 this.supportFragmentManager
                         .beginTransaction()
