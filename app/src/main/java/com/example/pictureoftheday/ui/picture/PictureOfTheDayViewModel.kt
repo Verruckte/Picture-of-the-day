@@ -11,7 +11,6 @@ import retrofit2.Response
 
 
 class PictureOfTheDayViewModel(
-
         private val liveDataForViewToObserve: MutableLiveData<PictureOfTheDayData> = MutableLiveData(),
         private val retrofitImpl: PODRetrofitImpl = PODRetrofitImpl()
 ) : ViewModel() {
@@ -27,7 +26,7 @@ class PictureOfTheDayViewModel(
         if (apiKey.isBlank()) {
             PictureOfTheDayData.Error(Throwable("You need API key"))
         } else {
-            if (date.isNullOrEmpty()) {
+            if(date.isNullOrEmpty()){
                 retrofitImpl
                         .getRetrofitImpl()
                         .getPictureOfTheDay(apiKey)
@@ -95,5 +94,3 @@ class PictureOfTheDayViewModel(
         }
     }
 }
-
-

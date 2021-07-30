@@ -18,4 +18,7 @@
     <string name="yesterday">Вчера</string>
     <string name="day_before_yesterday">Позавчера</string>
     <string name="greeting_message">Picture Of The Day. Для начала работы нажмите здесь!</string>
+    <string name="today_fragment_title">Today Title</string>
+    <string name="yesterday_fragment_title">Yesterday Title</string>
+    <string name="before_yesterday_fragment_title">Before Yesterday Title</string>
 </resources>

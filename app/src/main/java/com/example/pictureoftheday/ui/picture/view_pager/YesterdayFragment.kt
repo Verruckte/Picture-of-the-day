@@ -1,16 +1,21 @@
 package com.example.pictureoftheday.ui.picture.view_pager
 
 import android.os.Bundle
+import android.transition.ChangeBounds
+import android.transition.TransitionManager
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnticipateOvershootInterpolator
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import coil.api.load
 import com.example.pictureoftheday.R
 import com.example.pictureoftheday.databinding.YesterdayFragmentBinding
+import com.example.pictureoftheday.databinding.YesterdayFragmentStartBinding
 import com.example.pictureoftheday.ui.picture.PictureOfTheDayData
 import com.example.pictureoftheday.ui.picture.PictureOfTheDayViewModel
 import java.text.SimpleDateFormat
@@ -18,20 +23,31 @@ import java.util.*
 
 class YesterdayFragment: Fragment() {
 
-    private var _binding: YesterdayFragmentBinding? = null
+    private var _binding: YesterdayFragmentStartBinding? = null
     private val binding get() = _binding!!
-
     private val viewModel: PictureOfTheDayViewModel by lazy {
         ViewModelProvider(this).get(PictureOfTheDayViewModel::class.java)
     }
+    private var shown = false
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        _binding = YesterdayFragmentBinding.inflate(inflater, container, false)
+        _binding = YesterdayFragmentStartBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.yesterdayImageView.setOnClickListener {
+            if (shown) {
+                hideInfo()
+            } else {
+                showInfo()
+            }
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -39,6 +55,34 @@ class YesterdayFragment: Fragment() {
         viewModel.getData(yesterdayDate()).observe(viewLifecycleOwner, {
             renderData(it)
         })
+    }
+
+    private fun showInfo() {
+        shown = true
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(context, R.layout.yesterday_fragment_end)
+        val transition = ChangeBounds()
+        transition.interpolator = AnticipateOvershootInterpolator(5.0f)
+        transition.duration = 1000
+        TransitionManager.beginDelayedTransition(
+                binding.yesterdayFragmentStartContainer,
+                transition
+        )
+        constraintSet.applyTo(binding.yesterdayFragmentStartContainer)
+    }
+
+    private fun hideInfo() {
+        shown = false
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(context, R.layout.yesterday_fragment_start)
+        val transition = ChangeBounds()
+        transition.interpolator = AnticipateOvershootInterpolator(5.0f)
+        transition.duration = 1000
+        TransitionManager.beginDelayedTransition(
+                binding.yesterdayFragmentStartContainer,
+                transition
+        )
+        constraintSet.applyTo(binding.yesterdayFragmentStartContainer)
     }
 
     private fun yesterdayDate(): String {
@@ -56,10 +100,13 @@ class YesterdayFragment: Fragment() {
                 if (url.isNullOrEmpty()) {
                     toast("Url is empty")
                 } else {
-                    binding.yesterdayImageView.load(url) {
-                        lifecycle(this@YesterdayFragment)
-                        error(R.drawable.ic_load_error_vector)
-                        placeholder(R.drawable.ic_no_photo_vector)
+                    with(binding) {
+                        yesterdayImageView.load(url) {
+                            lifecycle(this@YesterdayFragment)
+                            error(R.drawable.ic_load_error_vector)
+                            placeholder(R.drawable.ic_no_photo_vector)
+                        }
+                        yesterdayTitle.text = serverResponseData.title
                     }
                 }
             }
