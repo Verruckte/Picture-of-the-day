@@ -21,4 +21,6 @@
     <string name="today_fragment_title">Today Title</string>
     <string name="yesterday_fragment_title">Yesterday Title</string>
     <string name="before_yesterday_fragment_title">Before Yesterday Title</string>
+    <string name="hw6_recycler_view">RecyclerView</string>
+    <string name="recycler_header">Заметки</string>
 </resources>

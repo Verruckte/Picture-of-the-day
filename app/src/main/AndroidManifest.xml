@@ -19,7 +19,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.pictureoftheday.ui.collapsing_toolbar.CollapsingToolbarActivity" />
+        <activity android:name="com.example.pictureoftheday.ui.collapsing_toolbar.CollapsingToolbarActivity"/>
+        <activity android:name="com.example.pictureoftheday.ui.recycler_activity.RecyclerActivity"/>
     </application>
 
 </manifest>
