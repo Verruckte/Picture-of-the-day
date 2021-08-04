@@ -1,11 +1,17 @@
 package com.example.pictureoftheday.ui.picture
 
 import android.content.Intent
+import android.graphics.Typeface.BOLD_ITALIC
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.text.Layout
+import android.text.SpannableString
+import android.text.style.*
 import android.view.*
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -13,14 +19,21 @@ import androidx.lifecycle.ViewModelProvider
 import coil.api.load
 import com.example.pictureoftheday.R
 import com.example.pictureoftheday.databinding.MainFragmentBinding
+import com.example.pictureoftheday.databinding.MainFragmentStartBinding
 import com.example.pictureoftheday.ui.MainActivity
+import com.example.pictureoftheday.ui.collapsing_toolbar.CollapsingToolbarActivity
+import com.example.pictureoftheday.ui.picture.view_pager.ViewPagerAdapter
+import com.example.pictureoftheday.ui.settings.SettingsFragment
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 
+const val BOTTOM_SHEET_HEADER = "BottomSheetHeader"
+const val BOTTOM_SHEET_CONTENT = "BottomSheetContent"
+
 class PictureOfTheDayFragment : Fragment() {
 
-    private var _binding: MainFragmentBinding? = null
+    private var _binding: MainFragmentStartBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: PictureOfTheDayViewModel by lazy {
@@ -36,7 +49,7 @@ class PictureOfTheDayFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = MainFragmentBinding.inflate(inflater, container, false)
+        _binding = MainFragmentStartBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -49,19 +62,23 @@ class PictureOfTheDayFragment : Fragment() {
                 )
             })
         }
+        binding.viewPager.adapter = ViewPagerAdapter(childFragmentManager)
+        binding.tabLayout.setupWithViewPager(binding.viewPager)
         setBottomSheetBehaviour(view.findViewById(R.id.bottom_sheet_container))
         bottomSheetHeader = view.findViewById(R.id.bottom_sheet_description_header)
         bottomSheetContent = view.findViewById(R.id.bottom_sheet_description)
         setBottomAppBar(view)
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel.getData().observe(viewLifecycleOwner) {
+        viewModel.getData(null).observe(viewLifecycleOwner, {
             renderData(it)
-        }
+        })
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun renderData(data: PictureOfTheDayData) {
         when (data) {
             is PictureOfTheDayData.Success -> {
@@ -74,13 +91,12 @@ class PictureOfTheDayFragment : Fragment() {
                 if (url.isNullOrEmpty()) {
                     toast("Url is empty")
                 } else {
-                    binding.imageView.load(url) {
-                        lifecycle(this@PictureOfTheDayFragment)
-                        error(R.drawable.ic_load_error_vector)
-                        placeholder(R.drawable.ic_no_photo_vector)
+                    if (serverResponseData.title != null && serverResponseData.explanation != null) {
+                        setBottomSheetTextSpanned(
+                            serverResponseData.title,
+                            serverResponseData.explanation
+                        )
                     }
-                    bottomSheetHeader.text = serverResponseData.title
-                    bottomSheetContent.text = serverResponseData.explanation
                 }
             }
 
@@ -99,6 +115,57 @@ class PictureOfTheDayFragment : Fragment() {
                 toast(data.error.message)
             }
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun setBottomSheetTextSpanned(title: String, explanation: String) {
+        val spannableTitle = SpannableString(title)
+        spannableTitle.setSpan(
+            BackgroundColorSpan(resources.getColor(R.color.lime_green)),
+            0, spannableTitle.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        spannableTitle.setSpan(
+            ForegroundColorSpan(resources.getColor(R.color.dark_slate_blue)),
+            0, spannableTitle.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        spannableTitle.setSpan(
+            StyleSpan(BOLD_ITALIC),
+            0, spannableTitle.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        spannableTitle.setSpan(
+            UnderlineSpan(),
+            0, spannableTitle.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        spannableTitle.setSpan(
+            RelativeSizeSpan(1.5f),
+            0, spannableTitle.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        bottomSheetHeader.text = spannableTitle
+
+        val spannableContent = SpannableString(explanation)
+        spannableContent.setSpan(
+            AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),
+            0, spannableContent.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        spannableContent.setSpan(
+            RelativeSizeSpan(1.2f),
+            0, spannableContent.length,
+            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        bottomSheetContent.text = spannableContent
     }
 
     private fun setBottomSheetBehaviour(bottomSheet: ConstraintLayout) {
@@ -129,14 +196,24 @@ class PictureOfTheDayFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val intent = Intent(context, CollapsingToolbarActivity::class.java)
+        intent.putExtra(BOTTOM_SHEET_HEADER, bottomSheetHeader.text)
+        intent.putExtra(BOTTOM_SHEET_CONTENT, bottomSheetContent.text)
         when (item.itemId) {
-            R.id.app_bar_fav -> toast(getString(R.string.favourite))
-            R.id.app_bar_settings -> toast(getString(R.string.settings))
+            R.id.app_bar_fav -> startActivity(intent)
+            R.id.app_bar_settings -> activity?.apply {
+                this.supportFragmentManager
+                    .beginTransaction()
+                    .add(R.id.container, SettingsFragment())
+                    .addToBackStack(null)
+                    .commitAllowingStateLoss()
+            }
             android.R.id.home -> {
                 activity?.let {
                     BottomNavigationDrawerFragment().show(it.supportFragmentManager, "tag")
                 }
             }
+            R.id.app_bar_search -> toast(getString(R.string.search))
         }
         return super.onOptionsItemSelected(item)
     }
